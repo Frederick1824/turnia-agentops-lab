@@ -576,6 +576,8 @@ No subsequent experiment is implied by this status.
 
 **Federico Montoro**
 
-GitHub: `Frederick1824`
+Portfolio: https://fedemontoro.vercel.app/
 
-Built as an AI-assisted software engineering and AgentOps experiment.
+GitHub: https://github.com/Frederick1824
+
+AI-assisted software engineering and AgentOps experiment.
