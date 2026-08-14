@@ -2,7 +2,8 @@ import { ArrowLeft, Check } from 'lucide-react'
 import { FormEvent, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { isOpenDay, toLocalDateKey } from '../utils/date'
+import { getOccupiedSlotPositions, validateReservationRequest } from '../domain/reservations'
+import { toLocalDateKey } from '../utils/date'
 import { generateTimeSlots } from '../utils/schedule'
 
 export function AppointmentFormPage() {
@@ -19,14 +20,21 @@ export function AppointmentFormPage() {
   const [note, setNote] = useState(existing?.note || '')
   const [error, setError] = useState('')
   const times = generateTimeSlots(settings.openingTime, settings.closingTime, settings.slotDurationMinutes)
-  const occupied = useMemo(() => appointments.filter(item => item.id !== id && item.date === date && item.time === time && item.status !== 'cancelled').map(item => item.slotPosition), [appointments, date, time, id])
-  const freePositions = Array.from({ length: settings.maxAppointmentsPerSlot }, (_, i) => i + 1).filter(position => !occupied.includes(position))
+  const occupied = useMemo(() => getOccupiedSlotPositions(appointments, date, time, id), [appointments, date, time, id])
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    if (!customerName.trim()) return setError('Ingresá el nombre del cliente.')
-    if (!isOpenDay(date, settings.openingDays)) return setError('El negocio no atiende en la fecha elegida.')
-    if (!freePositions.includes(slotPosition)) return setError('Ese cupo ya no está disponible. Elegí otro.')
+    const validation = validateReservationRequest({
+      request: { customerName, date, time, slotPosition },
+      settings,
+      appointments,
+      excludedAppointmentId: id,
+    })
+    if (!validation.valid) {
+      if (validation.reason === 'customer-name-required') return setError('Ingresá el nombre del cliente.')
+      if (validation.reason === 'closed-day') return setError('El negocio no atiende en la fecha elegida.')
+      return setError('Ese cupo ya no está disponible. Elegí otro.')
+    }
     const input = { customerName: customerName.trim(), phone: phone.trim() || undefined, date, time, slotPosition, note: note.trim() }
     if (existing) { updateAppointment(existing.id, input); navigate(`/turnos/${existing.id}`) }
     else { const created = addAppointment(input); navigate(`/turnos/${created.id}`) }
