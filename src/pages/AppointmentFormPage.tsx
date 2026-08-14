@@ -33,6 +33,7 @@ export function AppointmentFormPage() {
     if (!validation.valid) {
       if (validation.reason === 'customer-name-required') return setError('Ingresá el nombre del cliente.')
       if (validation.reason === 'closed-day') return setError('El negocio no atiende en la fecha elegida.')
+      if (validation.reason === 'invalid-time') return setError('El horario elegido no está disponible.')
       return setError('Ese cupo ya no está disponible. Elegí otro.')
     }
     const input = { customerName: customerName.trim(), phone: phone.trim() || undefined, date, time, slotPosition, note: note.trim() }

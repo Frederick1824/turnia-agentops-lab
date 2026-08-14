@@ -1,5 +1,6 @@
 import type { Appointment, BusinessSettings } from '../types'
 import { isOpenDay } from '../utils/date'
+import { generateTimeSlots } from '../utils/schedule'
 
 export interface ReservationRequest {
   customerName: string
@@ -10,7 +11,7 @@ export interface ReservationRequest {
 
 export type ReservationValidationResult =
   | { valid: true }
-  | { valid: false; reason: 'customer-name-required' | 'closed-day' | 'slot-unavailable' }
+  | { valid: false; reason: 'customer-name-required' | 'closed-day' | 'invalid-time' | 'slot-unavailable' }
 
 interface ReservationValidationInput {
   request: ReservationRequest
@@ -39,6 +40,12 @@ export function validateReservationRequest({
   if (!request.customerName.trim()) return { valid: false, reason: 'customer-name-required' }
   if (!isOpenDay(request.date, settings.openingDays)) return { valid: false, reason: 'closed-day' }
 
+  const validTimes = generateTimeSlots(
+    settings.openingTime,
+    settings.closingTime,
+    settings.slotDurationMinutes,
+  )
+  if (!validTimes.includes(request.time)) return { valid: false, reason: 'invalid-time' }
 
   const occupied = getOccupiedSlotPositions(appointments, request.date, request.time, excludedAppointmentId)
   const freePositions = Array.from(
