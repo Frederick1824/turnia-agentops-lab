@@ -22,6 +22,29 @@ El primer experimento, `EXP-001`, completó exitosamente ese ciclo.
 
 ---
 
+## Inspiración y agradecimiento
+
+Este experimento nació a partir de ideas presentadas por **Axel Labruna** sobre AgentOps, desarrollo asistido por IA y testing adversarial.
+
+En particular, su trabajo inspiró la exploración de conceptos como:
+
+- separar la autonomía de los agentes de su autoridad;
+- utilizar contratos y criterios de aceptación explícitos;
+- trabajar con roles Planner / Executor / Critic;
+- aplicar revisión adversarial antes de declarar éxito;
+- exigir evidencia ejecutable en lugar de asumir resultados;
+- utilizar Git como registro trazable de decisiones y resultados.
+
+Un agradecimiento especial a Axel por compartir estas ideas y poner su trabajo a disposición de la comunidad.
+
+Repositorio de referencia:
+
+https://github.com/axellab/adversarial-testing-toolkit
+
+TurnIA AgentOps Lab es un experimento independiente desarrollado sobre TurnIA. No es un fork, una adaptación oficial ni una redistribución del toolkit de Axel Labruna.
+
+---
+
 ## Idea central
 
 El flujo sigue un principio simple de AgentOps:
